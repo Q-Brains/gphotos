@@ -186,3 +186,43 @@ func (albums *albumsRequests) BatchRemoveMediaItems(client *http.Client, albumID
 type AlbumsBatchRemoveMediaItemsRequest struct {
 	MediaItemIDs []string `json:"mediaItemIds,omitempty"`
 }
+
+// - create
+
+// Create is a method that creates an album in a user's Google Photos library.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/create
+func (albums *albumsRequests) Create(client *http.Client, request AlbumsCreateRequest) (AlbumsCreateResponse, error) {
+	outputJSON, err := json.Marshal(request)
+	if err != nil {
+		return AlbumsCreateResponse{}, err
+	}
+	req, err := http.NewRequest("POST", albums.baseURL(), bytes.NewBuffer(outputJSON))
+	resp, err := client.Do(req)
+	if err != nil {
+		return AlbumsCreateResponse{}, err
+	}
+	defer resp.Body.Close()
+	e := RequestError(resp)
+	if e != nil {
+		return AlbumsCreateResponse{}, e
+	}
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return AlbumsCreateResponse{}, err
+	}
+	var response AlbumsCreateResponse
+	if err := json.Unmarshal(b, &response); err != nil {
+		return AlbumsCreateResponse{}, err
+	}
+	return response, nil
+}
+
+// AlbumsCreateRequest is a required body of Albums.Create method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/batchRemoveMediaItems#request-body
+type AlbumsCreateRequest struct {
+	Album Album `json:"album,omitempty"`
+}
+
+// AlbumsCreateResponse is the body returned by the Albums.Create method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/batchRemoveMediaItems#response-body
+type AlbumsCreateResponse Album
