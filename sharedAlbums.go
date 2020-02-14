@@ -8,11 +8,11 @@ import (
 	"net/url"
 )
 
-// SharedAlbums is the only instance of SharedAlbumsRequests.
+// SharedAlbums is the only instance of SharedAlbumsRequests(https://godoc.org/github.com/Q-Brains/gphotos#SharedAlbumsRequests).
 var SharedAlbums SharedAlbumsRequests = sharedAlbumsRequests{}
 
 // SharedAlbumsRequests is a collection of request methods belonging to `sharedAlbums`.
-// The only instance of SharedAlbumsRequests is SharedAlbums.
+// The only instance of SharedAlbumsRequests is SharedAlbums(https://godoc.org/github.com/Q-Brains/gphotos#SharedAlbums).
 // Source: https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums
 type SharedAlbumsRequests interface {
 	baseURL() string

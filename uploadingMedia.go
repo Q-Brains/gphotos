@@ -8,10 +8,11 @@ import (
 	"strconv"
 )
 
-// UploadingMedia is the only instance of UploadingMediaRequests.
+// UploadingMedia is the only instance of UploadingMediaRequests(https://godoc.org/github.com/Q-Brains/gphotos#UploadMediaRequests).
 var UploadingMedia UploadingMediaRequests = uploadingMediaRequests{}
 
 // UploadingMediaRequests is a collection of request methods belonging to `UploadingMedia`.
+// The only instance of UploadMediaRequests is UploadMedia(https://godoc.org/github.com/Q-Brains/gphotos#UploadMedia).
 // Source: https://developers.google.com/photos/library/guides/overview
 type UploadingMediaRequests interface {
 	baseURL() string

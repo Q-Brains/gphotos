@@ -9,11 +9,11 @@ import (
 	"strconv"
 )
 
-// Albums is the only instance of AlbumsRequests.
+// Albums is the only instance of AlbumsRequests(https://godoc.org/github.com/Q-Brains/gphotos#AlbumsRequests).
 var Albums AlbumsRequests = albumsRequests{}
 
 // AlbumsRequests is a collection of requests methods belonging to `albums`.
-// The only instance of AlbumsRequests is Albums.
+// The only instance of AlbumsRequests is Albums(https://godoc.org/github.com/Q-Brains/gphotos#Albums).
 // Source: https://developers.google.com/photos/library/reference/rest/v1/albums
 type AlbumsRequests interface {
 	baseURL() string

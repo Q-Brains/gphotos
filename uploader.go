@@ -8,10 +8,11 @@ import (
 	"strings"
 )
 
-// Uploader is the only instance of UploadMethods.
+// Uploader is the only instance of UploadMethods(https://godoc.org/github.com/Q-Brains/gphotos#UploadMethods).
 var Uploader UploadMethods = uploadMethods{}
 
 // UploadMethods is a collection of customized upload methods.
+// The only instance of UploadMethods is UploadMethods(https://godoc.org/github.com/Q-Brains/gphotos#UploadMethods).
 type UploadMethods interface {
 	// Upload is a method to upload MediaItems to GooglePhotos.
 	// Use UploadWithAlbum or UploadWithAlbumname if you want to add these MediaItems to album at the same time as upload.
