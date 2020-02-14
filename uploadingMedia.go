@@ -8,6 +8,29 @@ import (
 	"strconv"
 )
 
+// UploadingMedia is the only instance of UploadingMediaRequests.
+var UploadingMedia UploadingMediaRequests = uploadingMediaRequests{}
+
+// UploadingMediaRequests is a collection of request methods belonging to `UploadingMedia`.
+// Source: https://developers.google.com/photos/library/guides/overview
+type UploadingMediaRequests interface {
+	baseURL() string
+
+	// UploadMedia is a method that uploads media items to a user’s library or album.
+	// Source: https://developers.google.com/photos/library/guides/upload-media
+	UploadMedia(client *http.Client, filePath string, filename string) (uploadToken string, err error)
+
+	// ResumableUploads is a method.
+	// Source: https://developers.google.com/photos/library/guides/resumable-uploads
+	ResumableUploads(client *http.Client, filePath string, filename string) (uploadToken string, err error)
+}
+
+type uploadingMediaRequests struct{}
+
+func (upload uploadingMediaRequests) baseURL() string {
+	return "https://photoslibrary.googleapis.com/v1/uploads"
+}
+
 func (upload uploadingMediaRequests) UploadMedia(client *http.Client, filePath string, filename string) (uploadToken string, err error) {
 	file, err := os.Open(filePath)
 	if err != nil {
