@@ -2,7 +2,10 @@
 
 [日本語版はこちら](./README.ja.md)
 
-## Overview
+## Installation
 
-This is a library that uses `Photos Library API` of `Google Photos APIs`.
-It corresponds to each method of [Reference](https://developers.google.com/photos/library/reference/rest).
+```sh
+go get github.com/Q-Brains/gphotos
+```
+
+See [GoDoc](https://godoc.org/github.com/Q-Brains/gphotos) for further documentation.

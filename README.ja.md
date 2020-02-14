@@ -2,7 +2,10 @@
 
 [Click here for English version.](./README.md)
 
-## 概要
+## インストール
 
-`Google Photos APIs`の`Photos Library API`を利用するライブラリ。
-[リファレンス](https://developers.google.com/photos/library/reference/rest)の各メソッドに対応している。
+```sh
+go get github.com/Q-Brains/gphotos
+```
+
+詳細については [GoDoc](https://godoc.org/github.com/Q-Brains/gphotos) を参照してください。
