@@ -85,3 +85,31 @@ type SharedAlbumsJoinRequest struct {
 type SharedAlbumsJoinResponse struct {
 	Album Album `json:"album,omitempty"`
 }
+
+// - leave
+
+// Leave is a method that leaves a previously-joined shared album on behalf of the Google Photos user.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums/leave
+func (sharedAlbums *sharedAlbumsRequests) Leave(client *http.Client, request SharedAlbumsLeaveRequest) error {
+	outputJSON, err := json.Marshal(request)
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequest("POST", sharedAlbums.baseURL()+":leave", bytes.NewBuffer(outputJSON))
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	e := RequestError(resp)
+	if e != nil {
+		return e
+	}
+	return nil
+}
+
+// SharedAlbumsLeaveRequest is a required body of the SharedAlbums.Leave method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums/leave#request-body
+type SharedAlbumsLeaveRequest struct {
+	ShareToken string `json:"shareToken,omitempty"`
+}
