@@ -29,3 +29,11 @@ const (
 	// After an enrichment item.
 	AfterEnrichmentItem
 )
+
+// Status represents a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/Status
+type Status struct {
+	Code    int               `json:"code,omitempty"`
+	Message string            `json:"message,omitempty"`
+	Details map[string]string `json:"details,omitempty"`
+}
