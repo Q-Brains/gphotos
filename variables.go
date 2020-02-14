@@ -145,6 +145,15 @@ type Authorizations interface {
 
 type authorizations struct{}
 
+// UploadingMedia is the only instance of UploadingMediaRequests.
+var UploadingMedia UploadingMediaRequests = uploadingMediaRequests{}
+
+// UploadingMediaRequests is a collection of request methods belonging to `UploadingMedia`.
+// Source: https://developers.google.com/photos/library/guides/overview
+type UploadingMediaRequests interface{}
+
+type uploadingMediaRequests struct{}
+
 // Uploader is a collection of customized upload methods.
 var Uploader UploadMethods = uploadMethods{}
 
