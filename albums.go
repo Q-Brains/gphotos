@@ -226,3 +226,33 @@ type AlbumsCreateRequest struct {
 // AlbumsCreateResponse is the body returned by the Albums.Create method.
 // Source: https://developers.google.com/photos/library/reference/rest/v1/albums/batchRemoveMediaItems#response-body
 type AlbumsCreateResponse Album
+
+// - get
+
+// Get is a method that returns the album based on the specified `albumId`.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/get
+func (albums *albumsRequests) Get(client *http.Client, albumID string) (AlbumsGetResponse, error) {
+	req, err := http.NewRequest("GET", albums.baseURL()+"/"+albumID, nil)
+	resp, err := client.Do(req)
+	if err != nil {
+		return AlbumsGetResponse{}, err
+	}
+	defer resp.Body.Close()
+	e := RequestError(resp)
+	if e != nil {
+		return AlbumsGetResponse{}, e
+	}
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return AlbumsGetResponse{}, err
+	}
+	var response AlbumsGetResponse
+	if err := json.Unmarshal(b, &response); err != nil {
+		return AlbumsGetResponse{}, err
+	}
+	return response, nil
+}
+
+// AlbumsGetResponse is the body returned by the Albums.Get method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/get#response-body
+type AlbumsGetResponse Album
