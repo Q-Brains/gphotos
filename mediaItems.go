@@ -75,9 +75,7 @@ type ContributorInfo struct {
 
 // - batchCreate
 
-// BatchCreate is a method that creates one or more media items in a user's Google Photos library.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/batchCreate
-func (mediaItems *mediaItemsRequests) BatchCreate(client *http.Client, request MediaItemsBatchCreateRequest) (MediaItemsBatchCreateResponse, error) {
+func (mediaItems mediaItemsRequests) BatchCreate(client *http.Client, request MediaItemsBatchCreateRequest) (MediaItemsBatchCreateResponse, error) {
 	outputJSON, err := json.Marshal(request)
 	if err != nil {
 		return MediaItemsBatchCreateResponse{}, err
@@ -140,9 +138,7 @@ type NewMediaItemResult struct {
 
 // - batchGet
 
-// BatchGet is a method that returns the list of media items for the specified media item identifiers.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/batchGet
-func (mediaItems *mediaItemsRequests) BatchGet(client *http.Client, queries ...MediaItemsBatchGetQuery) (MediaItemsBatchGetResponse, error) {
+func (mediaItems mediaItemsRequests) BatchGet(client *http.Client, queries ...MediaItemsBatchGetQuery) (MediaItemsBatchGetResponse, error) {
 	values := url.Values{}
 	for _, query := range queries {
 		query(&values)
@@ -194,9 +190,7 @@ type MediaItemResult struct {
 
 // - get
 
-// Get is a method that returns the media item for the specified media item identifier.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/get
-func (mediaItems *mediaItemsRequests) Get(client *http.Client, mediaItemID string) (MediaItemsGetResponse, error) {
+func (mediaItems mediaItemsRequests) Get(client *http.Client, mediaItemID string) (MediaItemsGetResponse, error) {
 	req, err := http.NewRequest("GET", mediaItems.baseURL()+"/"+mediaItemID, nil)
 	resp, err := client.Do(req)
 	if err != nil {
@@ -224,9 +218,7 @@ type MediaItemsGetResponse MediaItem
 
 // - list
 
-// List is a method that list all media items from a user's Google Photos library.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/list
-func (mediaItems *mediaItemsRequests) List(client *http.Client, queries ...ListQuery) (MediaItemsListResponse, error) {
+func (mediaItems mediaItemsRequests) List(client *http.Client, queries ...ListQuery) (MediaItemsListResponse, error) {
 	values := url.Values{}
 	for _, query := range queries {
 		query(&values)
@@ -262,25 +254,7 @@ type MediaItemsListResponse struct {
 
 // - search
 
-// MediaItemsSearchRequest is a required body of the MediaItems.Search method.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/search#request-body
-type MediaItemsSearchRequest struct {
-	AlbumID   string  `json:"albumId,omitempty"`
-	PageSize  int     `json:"pageSize,omitempty"`
-	PageToken string  `json:"pageToken,omitempty"`
-	Filters   Filters `json:"filters,omitempty"`
-}
-
-// MediaItemsSearchResponse is the body returned by the MediaItems.BatchGet method.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/search#response-body
-type MediaItemsSearchResponse struct {
-	MediaItems    []MediaItem `json:"mediaItems,omitempty"`
-	NextPageToken string      `json:"nextPageToken,omitempty"`
-}
-
-// Search is a method that searches for media items in a user's Google Photos library.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/search
-func (mediaItems *mediaItemsRequests) Search(client *http.Client, request MediaItemsSearchRequest) (MediaItemsSearchResponse, error) {
+func (mediaItems mediaItemsRequests) Search(client *http.Client, request MediaItemsSearchRequest) (MediaItemsSearchResponse, error) {
 	outputJSON, err := json.Marshal(request)
 	if err != nil {
 		return MediaItemsSearchResponse{}, err
@@ -304,6 +278,22 @@ func (mediaItems *mediaItemsRequests) Search(client *http.Client, request MediaI
 		return MediaItemsSearchResponse{}, err
 	}
 	return response, nil
+}
+
+// MediaItemsSearchRequest is a required body of the MediaItems.Search method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/search#request-body
+type MediaItemsSearchRequest struct {
+	AlbumID   string  `json:"albumId,omitempty"`
+	PageSize  int     `json:"pageSize,omitempty"`
+	PageToken string  `json:"pageToken,omitempty"`
+	Filters   Filters `json:"filters,omitempty"`
+}
+
+// MediaItemsSearchResponse is the body returned by the MediaItems.BatchGet method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/search#response-body
+type MediaItemsSearchResponse struct {
+	MediaItems    []MediaItem `json:"mediaItems,omitempty"`
+	NextPageToken string      `json:"nextPageToken,omitempty"`
 }
 
 // Filters that can be applied to a media item search.
