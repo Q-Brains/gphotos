@@ -191,3 +191,33 @@ type MediaItemResult struct {
 	Status    Status    `json:"status,omitempty"`
 	MediaItem MediaItem `json:"mediaItem,omitempty"`
 }
+
+// - get
+
+// Get is a method that returns the media item for the specified media item identifier.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/get
+func (mediaItems *mediaItemsRequests) Get(client *http.Client, mediaItemID string) (MediaItemsGetResponse, error) {
+	req, err := http.NewRequest("GET", mediaItems.baseURL()+"/"+mediaItemID, nil)
+	resp, err := client.Do(req)
+	if err != nil {
+		return MediaItemsGetResponse{}, err
+	}
+	defer resp.Body.Close()
+	e := RequestError(resp)
+	if e != nil {
+		return MediaItemsGetResponse{}, e
+	}
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return MediaItemsGetResponse{}, err
+	}
+	var response MediaItemsGetResponse
+	if err := json.Unmarshal(b, &response); err != nil {
+		return MediaItemsGetResponse{}, err
+	}
+	return response, nil
+}
+
+// MediaItemsGetResponse is the body returned by the MediaItems.Get method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/get#response-body
+type MediaItemsGetResponse MediaItem
