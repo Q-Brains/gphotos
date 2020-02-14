@@ -14,9 +14,7 @@ import (
 
 // - get
 
-// Get is a method that returns the album based on the specified `shareToken`.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums/get
-func (sharedAlbums *sharedAlbumsRequests) Get(client *http.Client, shareToken string) (SharedAlbumsGetResponse, error) {
+func (sharedAlbums sharedAlbumsRequests) Get(client *http.Client, shareToken string) (SharedAlbumsGetResponse, error) {
 	req, err := http.NewRequest("GET", sharedAlbums.baseURL()+"/"+shareToken, nil)
 	if err != nil {
 		return SharedAlbumsGetResponse{}, err
@@ -47,9 +45,7 @@ type SharedAlbumsGetResponse Album
 
 // - join
 
-// Join is a method that joins a shared album on behalf of the Google Photos user.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums/join
-func (sharedAlbums *sharedAlbumsRequests) Join(client *http.Client, request SharedAlbumsJoinRequest) (SharedAlbumsJoinResponse, error) {
+func (sharedAlbums sharedAlbumsRequests) Join(client *http.Client, request SharedAlbumsJoinRequest) (SharedAlbumsJoinResponse, error) {
 	outputJSON, err := json.Marshal(request)
 	if err != nil {
 		return SharedAlbumsJoinResponse{}, err
@@ -89,9 +85,7 @@ type SharedAlbumsJoinResponse struct {
 
 // - leave
 
-// Leave is a method that leaves a previously-joined shared album on behalf of the Google Photos user.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums/leave
-func (sharedAlbums *sharedAlbumsRequests) Leave(client *http.Client, request SharedAlbumsLeaveRequest) error {
+func (sharedAlbums sharedAlbumsRequests) Leave(client *http.Client, request SharedAlbumsLeaveRequest) error {
 	outputJSON, err := json.Marshal(request)
 	if err != nil {
 		return err
@@ -117,9 +111,7 @@ type SharedAlbumsLeaveRequest struct {
 
 // - list
 
-// List is a method that lists all shared albums available in the Sharing tab of the user's Google Photos app.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums/list
-func (sharedAlbums *sharedAlbumsRequests) List(client *http.Client, queries ...ListQuery) (SharedAlbumsListResponse, error) {
+func (sharedAlbums sharedAlbumsRequests) List(client *http.Client, queries ...ListQuery) (SharedAlbumsListResponse, error) {
 	values := url.Values{}
 	for _, query := range queries {
 		query(&values)

@@ -86,12 +86,30 @@ func (mediaItems mediaItemsRequests) baseURL() string {
 	return "https://photoslibrary.googleapis.com/v1/mediaItems"
 }
 
-// SharedAlbums is a collection of request methods belonging to `sharedAlbums`.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums
+// SharedAlbums is the only instance of SharedAlbumsRequests.
 var SharedAlbums SharedAlbumsRequests = sharedAlbumsRequests{}
 
+// SharedAlbumsRequests is a collection of request methods belonging to `sharedAlbums`.
+// The only instance of SharedAlbumsRequests is SharedAlbums.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums
 type SharedAlbumsRequests interface {
 	baseURL() string
+
+	// Get is a method that returns the album based on the specified `shareToken`.
+	// Source: https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums/get
+	Get(client *http.Client, shareToken string) (SharedAlbumsGetResponse, error)
+
+	// Join is a method that joins a shared album on behalf of the Google Photos user.
+	// Source: https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums/join
+	Join(client *http.Client, request SharedAlbumsJoinRequest) (SharedAlbumsJoinResponse, error)
+
+	// Leave is a method that leaves a previously-joined shared album on behalf of the Google Photos user.
+	// Source: https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums/leave
+	Leave(client *http.Client, request SharedAlbumsLeaveRequest) error
+
+	// List is a method that lists all shared albums available in the Sharing tab of the user's Google Photos app.
+	// Source: https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums/list
+	List(client *http.Client, queries ...ListQuery) (SharedAlbumsListResponse, error)
 }
 
 type sharedAlbumsRequests struct{}
