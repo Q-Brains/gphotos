@@ -118,6 +118,15 @@ func (sharedAlbums sharedAlbumsRequests) baseURL() string {
 	return "https://photoslibrary.googleapis.com/v1/sharedAlbums"
 }
 
+// Auth is the only instance of Authorizations.
+var Auth Authorizations = authorizations{}
+
+// Authorizations is a collection of authentication methods.
+// However, PhotosLibraryAPI can only be authenticated with OAuth2 authentication.
+type Authorizations interface{}
+
+type authorizations struct{}
+
 // Uploader is a collection of customized upload methods.
 var Uploader UploadMethods = uploadMethods{}
 
