@@ -168,9 +168,10 @@ func (upload uploadingMediaRequests) baseURL() string {
 	return "https://photoslibrary.googleapis.com/v1/uploads"
 }
 
-// Uploader is a collection of customized upload methods.
+// Uploader is the only instance of UploadMethods.
 var Uploader UploadMethods = uploadMethods{}
 
+// UploadMethods is a collection of customized upload methods.
 type UploadMethods interface{}
 
 type uploadMethods struct{}
