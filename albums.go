@@ -320,3 +320,45 @@ func ExcludeNonAppCreatedData(flag bool) ListQuery {
 		v.Add("excludeNonAppCreatedData", strconv.FormatBool(flag))
 	}
 }
+
+// - share
+
+// Share is a method that marks an album as shared and accessible to other users.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/share
+func (albums *albumsRequests) Share(client *http.Client, albumID string, request AlbumsShareRequest) (AlbumsShareResponse, error) {
+	outputJSON, err := json.Marshal(request)
+	if err != nil {
+		return AlbumsShareResponse{}, err
+	}
+	req, err := http.NewRequest("POST", albums.baseURL()+"/"+albumID+":share", bytes.NewBuffer(outputJSON))
+	resp, err := client.Do(req)
+	if err != nil {
+		return AlbumsShareResponse{}, err
+	}
+	defer resp.Body.Close()
+	e := RequestError(resp)
+	if e != nil {
+		return AlbumsShareResponse{}, e
+	}
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return AlbumsShareResponse{}, err
+	}
+	var response AlbumsShareResponse
+	if err := json.Unmarshal(b, &response); err != nil {
+		return AlbumsShareResponse{}, err
+	}
+	return response, nil
+}
+
+// AlbumsShareRequest is a required body of Albums.Share method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/share#request-body
+type AlbumsShareRequest struct {
+	SharedAlbumOptions SharedAlbumOptions `json:"sharedAlbumOptions,omitempty"`
+}
+
+// AlbumsShareResponse is the body returned by the Albums.Share method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/share#response-body
+type AlbumsShareResponse struct {
+	ShareInfo ShareInfo `json:"shareInfo,omitempty"`
+}
