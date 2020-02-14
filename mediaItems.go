@@ -1,5 +1,12 @@
 package gphotos
 
+import (
+	"bytes"
+	"encoding/json"
+	"io/ioutil"
+	"net/http"
+)
+
 // Resource: mediaItems
 
 // - Overview
@@ -63,4 +70,69 @@ const (
 type ContributorInfo struct {
 	ProfilePictureBaseURL string `json:"profilePictureBaseUrl,omitempty"`
 	DisplayName           string `json:"displayName,omitempty"`
+}
+
+// - batchCreate
+
+// BatchCreate is a method that creates one or more media items in a user's Google Photos library.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/batchCreate
+func (mediaItems *mediaItemsRequests) BatchCreate(client *http.Client, request MediaItemsBatchCreateRequest) (MediaItemsBatchCreateResponse, error) {
+	outputJSON, err := json.Marshal(request)
+	if err != nil {
+		return MediaItemsBatchCreateResponse{}, err
+	}
+	req, err := http.NewRequest("POST", mediaItems.baseURL()+":batchCreate", bytes.NewBuffer(outputJSON))
+	resp, err := client.Do(req)
+	if err != nil {
+		return MediaItemsBatchCreateResponse{}, err
+	}
+	defer resp.Body.Close()
+	e := RequestError(resp)
+	if e != nil {
+		return MediaItemsBatchCreateResponse{}, e
+	}
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return MediaItemsBatchCreateResponse{}, err
+	}
+	var response MediaItemsBatchCreateResponse
+	if err := json.Unmarshal(b, &response); err != nil {
+		return MediaItemsBatchCreateResponse{}, err
+	}
+	return response, nil
+}
+
+// MediaItemsBatchCreateRequest is a required body of the MediaItems.BatchCreate method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/batchCreate#request-body
+type MediaItemsBatchCreateRequest struct {
+	AlbumID       string         `json:"albumId,omitempty"`
+	NewMediaItems []NewMediaItem `json:"newMediaItems,omitempty"`
+	AlbumPosition AlbumPosition  `json:"albumPosition,omitempty"`
+}
+
+// MediaItemsBatchCreateResponse is the body returned by the MediaItems.BatchCreate method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/batchCreate#response-body
+type MediaItemsBatchCreateResponse struct {
+	NewMediaItemResults []NewMediaItemResult `json:"newMediaItemResults,omitempty"`
+}
+
+// NewMediaItem represents new media item that's created in a user's Google Photos account.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/batchCreate#newmediaitem
+type NewMediaItem struct {
+	Description     string          `json:"description,omitempty"`
+	SimpleMediaItem SimpleMediaItem `json:"simpleMediaItem,omitempty"`
+}
+
+// SimpleMediaItem represents a simple media item to be created in Google Photos via an upload token.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/batchCreate#simplemediaitem
+type SimpleMediaItem struct {
+	UploadToken string `json:"uploadToken,omitempty"`
+}
+
+// NewMediaItemResult represents result of creating a new media item.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/batchCreate#newmediaitemresult
+type NewMediaItemResult struct {
+	UploadToken string    `json:"uploadToken,omitempty"`
+	Status      Status    `json:"status,omitempty"`
+	MediaItem   MediaItem `json:"mediaItem,omitempty"`
 }
