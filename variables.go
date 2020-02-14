@@ -1,6 +1,10 @@
 package gphotos
 
-import "net/http"
+import (
+	"net/http"
+
+	"golang.org/x/oauth2"
+)
 
 // Albums is the only instance of AlbumsRequests.
 var Albums AlbumsRequests = albumsRequests{}
@@ -123,7 +127,21 @@ var Auth Authorizations = authorizations{}
 
 // Authorizations is a collection of authentication methods.
 // However, PhotosLibraryAPI can only be authenticated with OAuth2 authentication.
-type Authorizations interface{}
+type Authorizations interface {
+	// OAuth2InteractiveFlow is a method that performs OAuth2 authentication of GooglePhotos interactivity.
+	// Because it uses standard input, it cannot be used in automation systems.
+	OAuth2InteractiveFlow(clientID string, clientSecret string, scopes AuthorizationScopes, state string, options ...oauth2.AuthCodeOption) (*http.Client, error)
+
+	// OAuth2Config is a method that creates the config of "golang.org/x/oauth2".
+	// Using this method eliminates the need to import "golang.org/x/oauth2".
+	OAuth2Config(clientID string, clientSecret string, scopes AuthorizationScopes) oauth2.Config
+
+	// OAuth2CreateURL is a method that creates OAuth2 authorization URL.
+	OAuth2CreateURL(conf oauth2.Config, state string, options ...oauth2.AuthCodeOption) string
+
+	// OAuth2CreateClient is a method that creates OAuth2 client from the config of "golang.org/x/oauth2" and authorization code.
+	OAuth2CreateClient(conf oauth2.Config, authCode string) (*http.Client, error)
+}
 
 type authorizations struct{}
 
