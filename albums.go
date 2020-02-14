@@ -130,3 +130,31 @@ type MapEnrichment struct {
 type EnrichmentItem struct {
 	ID string `json:"id,omitempty"`
 }
+
+// - batchAddMediaItems
+
+// BatchAddMediaItems is a method that adds one or more media items in a user's Google Photos library to an album.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/batchAddMediaItems
+func (albums *albumsRequests) BatchAddMediaItems(client *http.Client, albumID string, request AlbumsBatchAddMediaItemsRequest) error {
+	outputJSON, err := json.Marshal(request)
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequest("POST", albums.baseURL()+"/"+albumID+":batchAddMediaItems", bytes.NewBuffer(outputJSON))
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	e := RequestError(resp)
+	if e != nil {
+		return e
+	}
+	return nil
+}
+
+// AlbumsBatchAddMediaItemsRequest is a required body of the Albums.AddMediaItems method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/batchAddMediaItems#request-body
+type AlbumsBatchAddMediaItemsRequest struct {
+	MediaItemIDs []string `json:"mediaItemIds,omitempty"`
+}
