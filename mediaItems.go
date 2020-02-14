@@ -8,11 +8,11 @@ import (
 	"net/url"
 )
 
-// MediaItems is the only instance of MediaItemsRequests.
+// MediaItems is the only instance of MediaItemsRequests(https://godoc.org/github.com/Q-Brains/gphotos#MediaItemsRequests).
 var MediaItems MediaItemsRequests = mediaItemsRequests{}
 
 // MediaItemsRequests is a collection of request methods belonging to `mediaItems`.
-// The only instance of MediaItemsRequests is MediaItems.
+// The only instance of MediaItemsRequests is MediaItems(https://godoc.org/github.com/Q-Brains/gphotos#MediaItems).
 // Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems
 type MediaItemsRequests interface {
 	baseURL() string

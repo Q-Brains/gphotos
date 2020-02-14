@@ -10,10 +10,11 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
-// Auth is the only instance of Authorizations.
+// Auth is the only instance of Authorizations(https://godoc.org/github.com/Q-Brains/gphotos#Authorizations).
 var Auth Authorizations = authorizations{}
 
 // Authorizations is a collection of authentication methods.
+// The only instance of Authorizations is Auth(https://godoc.org/github.com/Q-Brains/gphotos#Auth).
 // However, PhotosLibraryAPI can only be authenticated with OAuth2 authentication.
 type Authorizations interface {
 	// OAuth2InteractiveFlow is a method that performs OAuth2 authentication of GooglePhotos interactivity.
