@@ -158,3 +158,31 @@ func (albums *albumsRequests) BatchAddMediaItems(client *http.Client, albumID st
 type AlbumsBatchAddMediaItemsRequest struct {
 	MediaItemIDs []string `json:"mediaItemIds,omitempty"`
 }
+
+// - batchRemoveMediaItems
+
+// BatchRemoveMediaItems is a method that removes one or more media items from a specified album.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/batchRemoveMediaItems
+func (albums *albumsRequests) BatchRemoveMediaItems(client *http.Client, albumID string, request AlbumsBatchRemoveMediaItemsRequest) error {
+	outputJSON, err := json.Marshal(request)
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequest("POST", albums.baseURL()+"/"+albumID+":batchRemoveMediaItems", bytes.NewBuffer(outputJSON))
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	e := RequestError(resp)
+	if e != nil {
+		return e
+	}
+	return nil
+}
+
+// AlbumsBatchRemoveMediaItemsRequest is a required body of Albums.BatchRemoveMediaItems method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/batchRemoveMediaItems#request-body
+type AlbumsBatchRemoveMediaItemsRequest struct {
+	MediaItemIDs []string `json:"mediaItemIds,omitempty"`
+}
