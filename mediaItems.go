@@ -8,6 +8,42 @@ import (
 	"net/url"
 )
 
+// MediaItems is the only instance of MediaItemsRequests.
+var MediaItems MediaItemsRequests = mediaItemsRequests{}
+
+// MediaItemsRequests is a collection of request methods belonging to `mediaItems`.
+// The only instance of MediaItemsRequests is MediaItems.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems
+type MediaItemsRequests interface {
+	baseURL() string
+
+	// BatchCreate is a method that creates one or more media items in a user's Google Photos library.
+	// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/batchCreate
+	BatchCreate(client *http.Client, request MediaItemsBatchCreateRequest) (MediaItemsBatchCreateResponse, error)
+
+	// BatchGet is a method that returns the list of media items for the specified media item identifiers.
+	// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/batchGet
+	BatchGet(client *http.Client, queries ...MediaItemsBatchGetQuery) (MediaItemsBatchGetResponse, error)
+
+	// Get is a method that returns the media item for the specified media item identifier.
+	// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/get
+	Get(client *http.Client, mediaItemID string) (MediaItemsGetResponse, error)
+
+	// List is a method that list all media items from a user's Google Photos library.
+	// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/list
+	List(client *http.Client, queries ...ListQuery) (MediaItemsListResponse, error)
+
+	// Search is a method that searches for media items in a user's Google Photos library.
+	// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/search
+	Search(client *http.Client, request MediaItemsSearchRequest) (MediaItemsSearchResponse, error)
+}
+
+type mediaItemsRequests struct{}
+
+func (mediaItems mediaItemsRequests) baseURL() string {
+	return "https://photoslibrary.googleapis.com/v1/mediaItems"
+}
+
 // Resource: mediaItems
 
 // - Overview

@@ -8,6 +8,25 @@ import (
 	"strings"
 )
 
+// Uploader is the only instance of UploadMethods.
+var Uploader UploadMethods = uploadMethods{}
+
+// UploadMethods is a collection of customized upload methods.
+type UploadMethods interface {
+	// Upload is a method to upload MediaItems to GooglePhotos.
+	// Use UploadWithAlbum or UploadWithAlbumname if you want to add these MediaItems to album at the same time as upload.
+	Upload(client *http.Client, filePaths []string) ([]MediaItem, error)
+
+	// UploadWithAlbum is a method to upload MediaItems to GooglePhotos with it added to the Album.
+	UploadWithAlbum(client *http.Client, filePaths []string, album Album) ([]MediaItem, error)
+
+	// UploadWithAlbumname is a method to upload MediaItems to GooglePhotos with it added to a specific name Album.
+	// If the Album does not exist in GooglePhotos, it will be created.
+	UploadWithAlbumname(client *http.Client, filePaths []string, albumname string) (Album, []MediaItem, error)
+}
+
+type uploadMethods struct{}
+
 func (uploader uploadMethods) Upload(client *http.Client, filePaths []string) ([]MediaItem, error) {
 	req := MediaItemsBatchCreateRequest{}
 
