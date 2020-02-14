@@ -76,3 +76,61 @@ func upload(client *http.Client, req MediaItemsBatchCreateRequest) ([]MediaItem,
 	}
 	return items, nil
 }
+
+func (uploader uploadMethods) UploadWithAlbumname(client *http.Client, filePaths []string, albumname string) (Album, []MediaItem, error) {
+	album, err := searchAlbum(client, albumname)
+	if err != nil {
+		return Album{}, nil, err
+	}
+
+	items, err := uploader.UploadWithAlbum(client, filePaths, album)
+	if err != nil {
+		return album, nil, err
+	}
+
+	return album, items, nil
+}
+
+func searchAlbum(client *http.Client, albumname string) (Album, error) {
+	var nextPageToken string
+	for true {
+		queries := []ListQuery{}
+		queries = append(queries, PageSize(1))
+		if !reflect.DeepEqual(nextPageToken, "") {
+			queries = append(queries, PageToken(nextPageToken))
+		}
+
+		resp, err := Albums.List(client, queries...)
+		if err != nil {
+			return Album{}, err
+		}
+
+		for _, album := range resp.Albums {
+			if reflect.DeepEqual(album.Title, albumname) {
+				return album, nil
+			}
+		}
+
+		nextPageToken = resp.NextPageToken
+		if reflect.DeepEqual(nextPageToken, "") {
+			break
+		}
+	}
+
+	return createAlbum(client, albumname)
+}
+
+func createAlbum(client *http.Client, albumname string) (Album, error) {
+	req := AlbumsCreateRequest{
+		Album: Album{
+			Title: albumname,
+		},
+	}
+
+	resp, err := Albums.Create(client, req)
+	if err != nil {
+		return Album{}, err
+	}
+
+	return Album(resp), nil
+}
