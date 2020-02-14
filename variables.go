@@ -172,6 +172,10 @@ func (upload uploadingMediaRequests) baseURL() string {
 var Uploader UploadMethods = uploadMethods{}
 
 // UploadMethods is a collection of customized upload methods.
-type UploadMethods interface{}
+type UploadMethods interface {
+	// Upload is a method to upload MediaItems to GooglePhotos.
+	// Use UploadWithAlbum or UploadWithAlbumname if you want to add these MediaItems to album at the same time as upload.
+	Upload(client *http.Client, filePaths []string) ([]MediaItem, error)
+}
 
 type uploadMethods struct{}
