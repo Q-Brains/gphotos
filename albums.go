@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"strconv"
 )
 
 // Resource: albums
@@ -256,3 +258,65 @@ func (albums *albumsRequests) Get(client *http.Client, albumID string) (AlbumsGe
 // AlbumsGetResponse is the body returned by the Albums.Get method.
 // Source: https://developers.google.com/photos/library/reference/rest/v1/albums/get#response-body
 type AlbumsGetResponse Album
+
+// - list
+
+// List is a method that lists all albums shown to a user in the Albums tab of the Google Photos app.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/list
+func (albums *albumsRequests) List(client *http.Client, queries ...ListQuery) (AlbumsListResponse, error) {
+	values := url.Values{}
+	for _, query := range queries {
+		query(&values)
+	}
+	req, err := http.NewRequest("GET", albums.baseURL(), nil)
+	req.URL.RawQuery = values.Encode()
+	resp, err := client.Do(req)
+	if err != nil {
+		return AlbumsListResponse{}, err
+	}
+	defer resp.Body.Close()
+	e := RequestError(resp)
+	if e != nil {
+		return AlbumsListResponse{}, e
+	}
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return AlbumsListResponse{}, err
+	}
+	var response AlbumsListResponse
+	if err := json.Unmarshal(b, &response); err != nil {
+		return AlbumsListResponse{}, err
+	}
+	return response, nil
+}
+
+// AlbumsListResponse is the body returned by the Albums.List method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/list#response-body
+type AlbumsListResponse struct {
+	Albums        []Album `json:"albums,omitempty"`
+	NextPageToken string  `json:"nextPageToken,omitempty"`
+}
+
+// ListQuery is a structure for using variable length arguments in Albums.List, MediaItems.List and SharedAlbums.List.
+type ListQuery func(*url.Values)
+
+// PageSize is a function for passing a page size query to Albums.List, MediaItems.List and SharedAlbums.List.
+func PageSize(size int) ListQuery {
+	return func(v *url.Values) {
+		v.Add("pageSize", strconv.Itoa(size))
+	}
+}
+
+// PageToken is a function for passing a page token query to Albums.List, MediaItems.List and SharedAlbums.List.
+func PageToken(token string) ListQuery {
+	return func(v *url.Values) {
+		v.Add("pageToken", token)
+	}
+}
+
+// ExcludeNonAppCreatedData is a function to pass a boolean value to whether to exclude the value created by App to Albums.List, MediaItems.List and SharedAlbums.List.
+func ExcludeNonAppCreatedData(flag bool) ListQuery {
+	return func(v *url.Values) {
+		v.Add("excludeNonAppCreatedData", strconv.FormatBool(flag))
+	}
+}
