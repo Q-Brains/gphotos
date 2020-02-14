@@ -1,5 +1,15 @@
 package gphotos
 
+import (
+	"bufio"
+	"fmt"
+	"net/http"
+	"os"
+
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
+)
+
 func (auth authorizations) OAuth2InteractiveFlow(clientID string, clientSecret string, scopes AuthorizationScopes, state string, options ...oauth2.AuthCodeOption) (*http.Client, error) {
 	conf := Auth.OAuth2Config(clientID, clientSecret, scopes)
 	authURL := Auth.OAuth2CreateURL(conf, state, options...)
@@ -40,13 +50,12 @@ func (auth authorizations) OAuth2CreateClient(conf oauth2.Config, authCode strin
 	return conf.Client(oauth2.NoContext, token), nil
 }
 
-
 // AuthorizationScopes represents the authentication scope of PhotosLibraryAPI.
 type AuthorizationScopes []authorizationScope
 
 func (scopes AuthorizationScopes) stringification() []string {
 	var results []string
-	for _, scope := range *scopes {
+	for _, scope := range scopes {
 		results = append(results, string(scope))
 	}
 	return results
@@ -62,7 +71,7 @@ const (
 	// For albums shared by the user, share properties are only returned if the .sharing scope has also been granted.
 	// The ShareInfo property for albums and the contributorInfo for mediaItems is only available if the .sharing scope has also been granted.
 	// For more information, see Share media.
-	Readonly auth authorizationscope = "https://www.googleapis.com/auth/photoslibrary.readonly"
+	Readonly authorizationScope = "https://www.googleapis.com/auth/photoslibrary.readonly"
 
 	// Write access only.
 	// Acess to upload bytes, create media items, create albums, and add enrichments. Only allows new media to be created in the user's library and in albums created by the app.
