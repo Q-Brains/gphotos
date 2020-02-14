@@ -362,3 +362,21 @@ type AlbumsShareRequest struct {
 type AlbumsShareResponse struct {
 	ShareInfo ShareInfo `json:"shareInfo,omitempty"`
 }
+
+// - unshare
+
+// Unshare is a method that marks a previously shared album as private.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/unshare
+func (albums *albumsRequests) Unshare(client *http.Client, albumID string) error {
+	req, err := http.NewRequest("POST", albums.baseURL()+"/"+albumID+":unshare", nil)
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	e := RequestError(resp)
+	if e != nil {
+		return e
+	}
+	return nil
+}
