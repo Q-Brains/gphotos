@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 )
 
 // Resource: mediaItems
@@ -135,4 +136,58 @@ type NewMediaItemResult struct {
 	UploadToken string    `json:"uploadToken,omitempty"`
 	Status      Status    `json:"status,omitempty"`
 	MediaItem   MediaItem `json:"mediaItem,omitempty"`
+}
+
+// - batchGet
+
+// BatchGet is a method that returns the list of media items for the specified media item identifiers.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/batchGet
+func (mediaItems *mediaItemsRequests) BatchGet(client *http.Client, queries ...MediaItemsBatchGetQuery) (MediaItemsBatchGetResponse, error) {
+	values := url.Values{}
+	for _, query := range queries {
+		query(&values)
+	}
+	req, err := http.NewRequest("GET", mediaItems.baseURL()+":batchGet", nil)
+	req.URL.RawQuery = values.Encode()
+	resp, err := client.Do(req)
+	if err != nil {
+		return MediaItemsBatchGetResponse{}, err
+	}
+	defer resp.Body.Close()
+	e := RequestError(resp)
+	if e != nil {
+		return MediaItemsBatchGetResponse{}, e
+	}
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return MediaItemsBatchGetResponse{}, err
+	}
+	var response MediaItemsBatchGetResponse
+	if err := json.Unmarshal(b, &response); err != nil {
+		return MediaItemsBatchGetResponse{}, err
+	}
+	return response, nil
+}
+
+// MediaItemsBatchGetResponse is the body returned by the MediaItems.BatchGet method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/batchGet#response-body
+type MediaItemsBatchGetResponse struct {
+	MediaItemResults []MediaItemResult `json:"mediaItemResults,omitempty"`
+}
+
+// MediaItemsBatchGetQuery is a structure for using variable length arguments in MediaItems.BatchGet.
+type MediaItemsBatchGetQuery func(*url.Values)
+
+// MediaItemIDs is a function for passing media item indexes query to MediaItems.BatchGet.
+func MediaItemIDs(ids string) MediaItemsBatchGetQuery {
+	return func(v *url.Values) {
+		v.Add("mediaItemIds", ids)
+	}
+}
+
+// MediaItemResult represents result of retrieving a media item.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/batchGet#mediaitemresult
+type MediaItemResult struct {
+	Status    Status    `json:"status,omitempty"`
+	MediaItem MediaItem `json:"mediaItem,omitempty"`
 }
