@@ -45,9 +45,7 @@ type SharedAlbumOptions struct {
 
 // - addEnrichment
 
-// AddEnrichment is a method that adds an enrichment at a specified position in a defined album.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/addEnrichment
-func (albums *albumsRequests) AddEnrichment(client *http.Client, albumID string, request AlbumsAddEnrichmentRequest) (AlbumsAddEnrichmentResponse, error) {
+func (albums albumsRequests) AddEnrichment(client *http.Client, albumID string, request AlbumsAddEnrichmentRequest) (AlbumsAddEnrichmentResponse, error) {
 	outputJSON, err := json.Marshal(request)
 	if err != nil {
 		return AlbumsAddEnrichmentResponse{}, err
@@ -135,9 +133,7 @@ type EnrichmentItem struct {
 
 // - batchAddMediaItems
 
-// BatchAddMediaItems is a method that adds one or more media items in a user's Google Photos library to an album.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/batchAddMediaItems
-func (albums *albumsRequests) BatchAddMediaItems(client *http.Client, albumID string, request AlbumsBatchAddMediaItemsRequest) error {
+func (albums albumsRequests) BatchAddMediaItems(client *http.Client, albumID string, request AlbumsBatchAddMediaItemsRequest) error {
 	outputJSON, err := json.Marshal(request)
 	if err != nil {
 		return err
@@ -163,9 +159,7 @@ type AlbumsBatchAddMediaItemsRequest struct {
 
 // - batchRemoveMediaItems
 
-// BatchRemoveMediaItems is a method that removes one or more media items from a specified album.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/batchRemoveMediaItems
-func (albums *albumsRequests) BatchRemoveMediaItems(client *http.Client, albumID string, request AlbumsBatchRemoveMediaItemsRequest) error {
+func (albums albumsRequests) BatchRemoveMediaItems(client *http.Client, albumID string, request AlbumsBatchRemoveMediaItemsRequest) error {
 	outputJSON, err := json.Marshal(request)
 	if err != nil {
 		return err
@@ -191,9 +185,7 @@ type AlbumsBatchRemoveMediaItemsRequest struct {
 
 // - create
 
-// Create is a method that creates an album in a user's Google Photos library.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/create
-func (albums *albumsRequests) Create(client *http.Client, request AlbumsCreateRequest) (AlbumsCreateResponse, error) {
+func (albums albumsRequests) Create(client *http.Client, request AlbumsCreateRequest) (AlbumsCreateResponse, error) {
 	outputJSON, err := json.Marshal(request)
 	if err != nil {
 		return AlbumsCreateResponse{}, err
@@ -231,9 +223,7 @@ type AlbumsCreateResponse Album
 
 // - get
 
-// Get is a method that returns the album based on the specified `albumId`.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/get
-func (albums *albumsRequests) Get(client *http.Client, albumID string) (AlbumsGetResponse, error) {
+func (albums albumsRequests) Get(client *http.Client, albumID string) (AlbumsGetResponse, error) {
 	req, err := http.NewRequest("GET", albums.baseURL()+"/"+albumID, nil)
 	resp, err := client.Do(req)
 	if err != nil {
@@ -261,9 +251,7 @@ type AlbumsGetResponse Album
 
 // - list
 
-// List is a method that lists all albums shown to a user in the Albums tab of the Google Photos app.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/list
-func (albums *albumsRequests) List(client *http.Client, queries ...ListQuery) (AlbumsListResponse, error) {
+func (albums albumsRequests) List(client *http.Client, queries ...ListQuery) (AlbumsListResponse, error) {
 	values := url.Values{}
 	for _, query := range queries {
 		query(&values)
@@ -323,9 +311,7 @@ func ExcludeNonAppCreatedData(flag bool) ListQuery {
 
 // - share
 
-// Share is a method that marks an album as shared and accessible to other users.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/share
-func (albums *albumsRequests) Share(client *http.Client, albumID string, request AlbumsShareRequest) (AlbumsShareResponse, error) {
+func (albums albumsRequests) Share(client *http.Client, albumID string, request AlbumsShareRequest) (AlbumsShareResponse, error) {
 	outputJSON, err := json.Marshal(request)
 	if err != nil {
 		return AlbumsShareResponse{}, err
@@ -365,9 +351,7 @@ type AlbumsShareResponse struct {
 
 // - unshare
 
-// Unshare is a method that marks a previously shared album as private.
-// Source: https://developers.google.com/photos/library/reference/rest/v1/albums/unshare
-func (albums *albumsRequests) Unshare(client *http.Client, albumID string) error {
+func (albums albumsRequests) Unshare(client *http.Client, albumID string) error {
 	req, err := http.NewRequest("POST", albums.baseURL()+"/"+albumID+":unshare", nil)
 	resp, err := client.Do(req)
 	if err != nil {
