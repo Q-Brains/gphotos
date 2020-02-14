@@ -19,6 +19,22 @@ func (uploader uploadMethods) Upload(client *http.Client, filePaths []string) ([
 	return upload(client, req)
 }
 
+func (uploader uploadMethods) UploadWithAlbum(client *http.Client, filePaths []string, album Album) ([]MediaItem, error) {
+	req := MediaItemsBatchCreateRequest{
+		AlbumID: album.ID,
+	}
+	if err := appendMediaItems(&req, client, filePaths); err != nil {
+		return nil, err
+	}
+
+	items, err := upload(client, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return items, nil
+}
+
 func appendMediaItems(req *MediaItemsBatchCreateRequest, client *http.Client, filePaths []string) error {
 	for _, filePath := range filePaths {
 		pathStrs := strings.Split(filePath, "/")

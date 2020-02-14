@@ -176,6 +176,9 @@ type UploadMethods interface {
 	// Upload is a method to upload MediaItems to GooglePhotos.
 	// Use UploadWithAlbum or UploadWithAlbumname if you want to add these MediaItems to album at the same time as upload.
 	Upload(client *http.Client, filePaths []string) ([]MediaItem, error)
+
+	// UploadWithAlbum is a method to upload MediaItems to GooglePhotos with it added to the Album.
+	UploadWithAlbum(client *http.Client, filePaths []string, album Album) ([]MediaItem, error)
 }
 
 type uploadMethods struct{}
