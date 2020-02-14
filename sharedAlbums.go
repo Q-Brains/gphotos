@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 )
 
 // Resource: sharedAlbums
@@ -112,4 +113,42 @@ func (sharedAlbums *sharedAlbumsRequests) Leave(client *http.Client, request Sha
 // Source: https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums/leave#request-body
 type SharedAlbumsLeaveRequest struct {
 	ShareToken string `json:"shareToken,omitempty"`
+}
+
+// - list
+
+// List is a method that lists all shared albums available in the Sharing tab of the user's Google Photos app.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums/list
+func (sharedAlbums *sharedAlbumsRequests) List(client *http.Client, queries ...ListQuery) (SharedAlbumsListResponse, error) {
+	values := url.Values{}
+	for _, query := range queries {
+		query(&values)
+	}
+	req, err := http.NewRequest("GET", sharedAlbums.baseURL(), nil)
+	req.URL.RawQuery = values.Encode()
+	resp, err := client.Do(req)
+	if err != nil {
+		return SharedAlbumsListResponse{}, err
+	}
+	defer resp.Body.Close()
+	e := RequestError(resp)
+	if e != nil {
+		return SharedAlbumsListResponse{}, e
+	}
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return SharedAlbumsListResponse{}, err
+	}
+	var response SharedAlbumsListResponse
+	if err := json.Unmarshal(b, &response); err != nil {
+		return SharedAlbumsListResponse{}, err
+	}
+	return response, nil
+}
+
+// SharedAlbumsListResponse is the body returned by the SharedAlbums.List method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/sharedAlbums/list#response-body
+type SharedAlbumsListResponse struct {
+	SharedAlbums  []Album `json:"sharedAlbums,omitempty"`
+	NextPageToken string  `json:"nextPageToken,omitempty"`
 }
