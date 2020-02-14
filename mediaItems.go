@@ -221,3 +221,41 @@ func (mediaItems *mediaItemsRequests) Get(client *http.Client, mediaItemID strin
 // MediaItemsGetResponse is the body returned by the MediaItems.Get method.
 // Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/get#response-body
 type MediaItemsGetResponse MediaItem
+
+// - list
+
+// List is a method that list all media items from a user's Google Photos library.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/list
+func (mediaItems *mediaItemsRequests) List(client *http.Client, queries ...ListQuery) (MediaItemsListResponse, error) {
+	values := url.Values{}
+	for _, query := range queries {
+		query(&values)
+	}
+	req, err := http.NewRequest("GET", mediaItems.baseURL(), nil)
+	req.URL.RawQuery = values.Encode()
+	resp, err := client.Do(req)
+	if err != nil {
+		return MediaItemsListResponse{}, err
+	}
+	defer resp.Body.Close()
+	e := RequestError(resp)
+	if e != nil {
+		return MediaItemsListResponse{}, e
+	}
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return MediaItemsListResponse{}, err
+	}
+	var response MediaItemsListResponse
+	if err := json.Unmarshal(b, &response); err != nil {
+		return MediaItemsListResponse{}, err
+	}
+	return response, nil
+}
+
+// MediaItemsListResponse is the body returned by the MediaItems.BatchGet method.
+// Source: https://developers.google.com/photos/library/reference/rest/v1/mediaItems/list#response-body
+type MediaItemsListResponse struct {
+	MediaItems    []MediaItem `json:"mediaItems,omitempty"`
+	NextPageToken string      `json:"nextPageToken,omitempty"`
+}
